@@ -58,6 +58,7 @@ async function getAllUsers(){
 
 async function addUser(name,email,password,role){
   try{
+    
     const hashedPassword= await bcrypt.hash(password,10)
     const [result]=await pool.query('insert into users (username,email,password,role) values (?,?,?,?)',[name,email,hashedPassword,role]);
     return {id :result.insertId ,message : "user added successfully"};
@@ -66,6 +67,10 @@ async function addUser(name,email,password,role){
   }
 }
 
+async function emailCheck(email){
+  const [row] = await pool.query('select * from users where email = ? ',[email])
+  return row.length>0
+}
 
 // (async()=>{
 //   const s=addUser('ibrahim','mashaqi2@edu','123','donor')
@@ -76,6 +81,6 @@ module.exports={
   login,
   getUser,
   getAllUsers,
-  addUser
-
+  addUser,
+  emailCheck
 };
