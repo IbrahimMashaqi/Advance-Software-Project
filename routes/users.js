@@ -1,12 +1,16 @@
+
 const express=require("express");
-const app =express();
-app.use(express.json());
 const jwt = require("jsonwebtoken")
 require("dotenv").config();
 const { login, getUser,getAllUsers, addUser,emailCheck } = require('../database_managment/users_DB');
+const router = express.Router()
+router.use(express.json());
 
 
-app.post("/login" ,async (req,res) => {
+
+
+
+router.post("/login" ,async (req,res) => {
     try{
         const {email,password} =req.body;
         const result=await login(email,password)
@@ -19,18 +23,18 @@ app.post("/login" ,async (req,res) => {
 
 });
 
-app.get("/users" ,authenticateToken, async (req,res) => {
+router.get("/" ,authenticateToken, async (req,res) => {
     try{
         const users=await getAllUsers()
         res.json(users)
 
     }catch(err){
         console.log(err)
-        res.status(500).send(json({message: 'failed to find users', error: err.message}))
+        res.status(500).json({message: 'failed to find users', error: err.message})
     }
 })
 
-app.get("/users/:id",authenticateToken,async(req,res) => {
+router.get("/:id",authenticateToken,async(req,res) => {
     try{
         const id=req.params.id
         const user=await getUser(id)
@@ -42,7 +46,7 @@ app.get("/users/:id",authenticateToken,async(req,res) => {
     }
 })
 
-app.post("/users",authenticateToken,async (req,res) => {
+router.post("/",authenticateToken,async (req,res) => {
     try{
         const {name,email,password,role}=req.body
         const found = await emailCheck(email)
@@ -79,10 +83,4 @@ function authenticateToken(req,res,next){
 
 
 
-
-
-
-
-app.listen(8000 , () =>{
-console.log("iam litening at port 8000")
-});
+module.exports=router
