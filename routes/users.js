@@ -2,11 +2,10 @@
 const express=require("express");
 const jwt = require("jsonwebtoken")
 require("dotenv").config();
-const { login, getUser,getAllUsers, addUser,emailCheck } = require('../database_managment/users_DB');
+const { getUser,getAllUsers, addUser,emailCheck } = require('../database_managment/users_DB');
+const {login} = require ('../database_managment/auth_db')
 const router = express.Router()
 router.use(express.json());
-
-
 
 
 
@@ -25,24 +24,27 @@ router.post("/login" ,async (req,res) => {
 
 router.get("/" ,authenticateToken, async (req,res) => {
     try{
-        const users=await getAllUsers()
+        const header=req.headers["authorization"]
+        const token= header && header.split(' ')[1]
+        const users=await getAllUsers(token)
         res.json(users)
 
     }catch(err){
         console.log(err)
-        res.status(500).json({message: 'failed to find users', error: err.message})
+        res.status(500).send(err.message)
     }
 })
 
 router.get("/:id",authenticateToken,async(req,res) => {
     try{
+        const header = req.headers['authorization']
+        const token =header && header.split(' ')[1]
         const id=req.params.id
-        const user=await getUser(id)
+        const user=await getUser(id,token)
         res.json(user)
 
     }catch(error){
-        console.log(error)
-        res.sendStatus(500)
+        res.status(500).send(error.message)
     }
 })
 
@@ -76,11 +78,8 @@ function authenticateToken(req,res,next){
         if(err)
              return res.sendStatus(403)
         req.user=user
-        next()
+        next() 
     })
 }
-
-
-
 
 module.exports=router
