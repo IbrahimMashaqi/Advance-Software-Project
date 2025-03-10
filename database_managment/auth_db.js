@@ -23,13 +23,17 @@ async function login(email, pass) {
       if (!isMatch) 
         throw new Error("Invalid email or password.");
   
-      const token = jwt.sign(
-        { id: user.id, role: user.role, email: user.email },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1h" }
+      const accessToken = jwt.sign({ id: user.id, role: user.role, email: user.email },process.env.ACCESS_TOKEN_SECRET,{ expiresIn: "10d" }
       );
+
+      const refreshToken = jwt.sign({ id: user.id, role: user.role, email: user.email },process.env.REFRESH_TOKEN_SECRET,{ expiresIn: "30m" }
+      );
+
+      await pool.query('update users set refresh_token = ? where id = ?',[refreshToken,user.id])
+
       delete user.password
-      return { token,user, message: "Login successful." };
+      delete user.refresh_token
+      return { accessToken,refreshToken,user, message: "Login successful." };
     }catch (error) {
       throw error;
     }
@@ -51,4 +55,4 @@ async function register(name,email,password,role){
 
 
 
-  module.exports = {login,register}
+  module.exports = {login,register,pool}
