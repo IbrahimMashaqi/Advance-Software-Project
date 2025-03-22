@@ -4,7 +4,6 @@ app.use(express.json());
 
 const authRout = require('./routes/auth')
 const userRout = require('./routes/users');
-const { addUser } = require("./database_managment/users_DB");
 app.use('/users',userRout)
 app.use('/auth',authRout)
 
