@@ -59,15 +59,44 @@ async function emailCheck(email) {
   }
 }
 
-//  (async()=>{
-//    const s=addUser('admin','admin@edu','123','admin')
-//  })()
+async function addUser(name, email, password, role) {
+  try{
+    const found =await emailCheck(email)
+    if(found)
+      throw new Error ('email already exist');
+    const hashedPassword= await bcrypt.hash(password,10)
+    const [result]=await pool.query('insert into users (username,email,password,role) values (?,?,?,?)',[name,email,hashedPassword,role]);
+    return {id :result.insertId, message : "user added successfully"};
+  }catch(error){
+    throw error;
+  }
+}
 
+
+async function getProfile(token) {
+  try {
+    console.log("123456")
+
+    decodedToken = jwt.decode(token)
+    const row = await pool.query("SELECT * FROM users where id =?", [decodedToken.id])
+    if(row.length===0) throw new Error
+    console.log("fghjk")
+    console.log(row[0])
+    delete row[0].password;
+    return row[0];
+  }
+  catch (error) {
+    throw error;
+  }
+
+}
 
 module.exports={
   
   getUser,
   getAllUsers,
   register,
-  emailCheck
+  emailCheck,
+  addUser,
+  getProfile
 };
