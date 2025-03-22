@@ -20,13 +20,14 @@ const pool = mysql.createPool({
 async function getUser(id,token) {
   try {
     
-    decodedToken = jwt.decode(token)
+    const decodedToken = jwt.decode(token)
     const role = decodedToken.role
     if(role !== 'admin')throw new Error ('you are not allowed to get the users')
-   
     const [rows] = await pool.query('SELECT * FROM users where id = ? ;',[id]);
+    if(rows.length===0)
+      return {user : "not found" , statusCode: 404}
     rows.forEach(row  => {delete row.password})
-    return rows
+    return {user : rows , statusCode: 200}
   } catch (err) {
       throw err
   }
@@ -59,30 +60,16 @@ async function emailCheck(email) {
   }
 }
 
-async function addUser(name, email, password, role) {
-  try{
-    const found =await emailCheck(email)
-    if(found)
-      throw new Error ('email already exist');
-    const hashedPassword= await bcrypt.hash(password,10)
-    const [result]=await pool.query('insert into users (username,email,password,role) values (?,?,?,?)',[name,email,hashedPassword,role]);
-    return {id :result.insertId, message : "user added successfully"};
-  }catch(error){
-    throw error;
-  }
-}
-
 
 async function getProfile(token) {
   try {
-    console.log("123456")
 
     decodedToken = jwt.decode(token)
-    const row = await pool.query("SELECT * FROM users where id =?", [decodedToken.id])
-    if(row.length===0) throw new Error
-    console.log("fghjk")
-    console.log(row[0])
-    delete row[0].password;
+    const [row] = await pool.query("SELECT * FROM users where id =?", [decodedToken.id])
+    if(row.length===0)
+      throw new Error
+    
+    row.forEach(ro => {delete ro.password})
     return row[0];
   }
   catch (error) {
@@ -91,12 +78,48 @@ async function getProfile(token) {
 
 }
 
+ 
+async function updateUser(token,name, password, role)  {
+  try{
+    decodedToken = jwt.decode(token)
+    const id = decodedToken.id
+    const [found] = await pool.query("select * from users where id = ?",[id])
+    if(found.length===0)return ({message : "user not found",statusCode : 404})
+    
+    const hashedPass = await bcrypt.hash(password , 10)
+    const [result] = await pool.query("UPDATE users SET username = ? , password = ? , role = ? WHERE id = ?", [name, hashedPass,role,id]) 
+    const [rows] = await pool.query("select * from users where id = ?",[id])
+    delete rows[0].password
+    return {message : "user updated",statusCode :200 , rows}
+  }
+  catch(error) {
+    console.log(error)
+    return ({message :error.message ,statusCode : 500})  }
+}
+
+async function deleteUser(token, id){
+  try{
+    const decodedToken = jwt.decode(token)
+    if(decodedToken.role!=='admin')
+      throw new Error ('you are not allowed to delete users')
+    const [result] = await pool.query("DELETE FROM users WHERE id = ?",[id])
+    if(result.affectedRows===0)
+      return {message : "user not found",statusCode :404}
+    return {message : "user deleted",statusCode : 200}
+  }
+  catch(error){
+    console.log(error)
+    return ({message : error.message ,statusCode : 500})
+  }
+}
+
 module.exports={
   
   getUser,
   getAllUsers,
   register,
   emailCheck,
-  addUser,
-  getProfile
+  getProfile,
+  updateUser,
+  deleteUser
 };

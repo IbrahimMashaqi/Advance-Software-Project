@@ -23,10 +23,10 @@ async function login(email, pass) {
       if (!isMatch) 
         throw new Error("Invalid email or password.");
   
-      const accessToken = jwt.sign({ id: user.id, role: user.role, email: user.email },process.env.ACCESS_TOKEN_SECRET,{ expiresIn: "10d" }
+      const accessToken = jwt.sign({ id: user.id, role: user.role, email: user.email },process.env.ACCESS_TOKEN_SECRET,{ expiresIn: "1h" }
       );
 
-      const refreshToken = jwt.sign({ id: user.id, role: user.role, email: user.email },process.env.REFRESH_TOKEN_SECRET,{ expiresIn: "30m" }
+      const refreshToken = jwt.sign({ id: user.id, role: user.role, email: user.email },process.env.REFRESH_TOKEN_SECRET,{ expiresIn: "10d" }
       );
 
       await pool.query('update users set refresh_token = ? where id = ?',[refreshToken,user.id])
