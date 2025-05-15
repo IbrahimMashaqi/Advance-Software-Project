@@ -6,11 +6,15 @@ const authRout = require('./routes/auth');
 const userRout = require('./routes/users');
 const sponsorRout = require ('./routes/sponsorshipManagement');
 const donationRout = require ('./routes/Donation');
+const volunteersRout = require ('./routes/volunteers');
+
 
 app.use('/users',userRout.router);
 app.use('/auth',authRout);
 app.use('/sponsorship',sponsorRout)
 app.use('/donations',donationRout)
+app.use('/volunteers',volunteersRout)
+
 
 app.listen(8000 , () =>{
 console.log("iam litening at port 8000")
