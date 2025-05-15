@@ -15,8 +15,6 @@ const pool = mysql.createPool({
 
 
 
-
-
 async function getUser(id,token) {
   try {
     
@@ -112,6 +110,7 @@ async function deleteUser(token, id){
     return ({message : error.message ,statusCode : 500})
   }
 }
+
 
 module.exports={
   

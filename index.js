@@ -2,15 +2,15 @@ const express = require("express");
 const app =express();
 app.use(express.json());
 
-const authRout = require('./routes/auth')
+const authRout = require('./routes/auth');
 const userRout = require('./routes/users');
-app.use('/users',userRout)
-app.use('/auth',authRout)
+const sponsorRout = require ('./routes/sponsorshipManagement');
+const donationRout = require ('./routes/Donation');
 
-
-// (async () => {
-//     await addUser('dono','email.com','123','donor')
-// })()
+app.use('/users',userRout.router);
+app.use('/auth',authRout);
+app.use('/sponsorship',sponsorRout)
+app.use('/donations',donationRout)
 
 app.listen(8000 , () =>{
 console.log("iam litening at port 8000")
