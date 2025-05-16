@@ -1,14 +1,4 @@
-const mysql = require("mysql2");
-require("dotenv").config();
-
-const pool = mysql
-  .createPool({
-    host: process.env.HOST,
-    user: process.env.USER_NAME,
-    password: process.env.PASSWORD,
-    database: process.env.DATABASE_NAME,
-  })
-  .promise();
+const pool = require("./db_config");
 
 async function addApplication(volunteer_id, opportunity_id) {
   try {

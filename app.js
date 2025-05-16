@@ -10,7 +10,7 @@ const volunteersRout = require("./routes/volunteers");
 const applicationssRout = require("./routes/Applications");
 const opportunityRoutes = require("./routes/opportunities");
 
-app.use("/users", userRout.router);
+app.use("/users", userRout);
 app.use("/auth", authRout);
 app.use("/sponsorship", sponsorRout);
 app.use("/donations", donationRout);
