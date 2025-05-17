@@ -51,10 +51,10 @@ async function updateSponsorship(id, status, end_date, start_date) {
   try {
     const [result] = await pool.query(
       `UPDATE sponsorships
-             SET status = COALESCE(?, status),
-                 end_date = COALESCE(?, end_date),
-                 start_date = COALESCE(?, start_date)
-             WHERE sponsorship_id = ?`,
+       SET status = COALESCE(?, status),
+           end_date = COALESCE(?, end_date),
+           start_date = COALESCE(?, start_date)
+       WHERE sponsorship_id = ?`,
       [status, end_date, start_date, id]
     );
     return result;
