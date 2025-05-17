@@ -53,7 +53,7 @@ const createEmergencyHandler = async (req, res) => {
 
     End date: ${emergency.end_date}
 
-    Aarget ammount : ${emergency.target_amount}
+    Target ammount : ${emergency.target_amount}
 
     Amount raised : ${emergency.amount_raised}
 

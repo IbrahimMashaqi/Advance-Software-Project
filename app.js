@@ -13,6 +13,7 @@ const orphanRoutes = require("./routes/orphans");
 const orphanageRoutes = require("./routes/orphanages");
 const reviewsRoutes = require("./routes/reviews");
 const deliveriesRoutes = require("./routes/deliveries");
+const emergencyRoute = require("./routes/emergency");
 
 app.use("/users", userRout);
 app.use("/auth", authRout);
@@ -25,6 +26,7 @@ app.use("/orphans", orphanRoutes);
 app.use("/orphanages", orphanageRoutes);
 app.use("/reviews", reviewsRoutes);
 app.use("/deliveries", deliveriesRoutes);
+app.use("/emergencies", emergencyRoute);
 
 app.listen(8000, () => {
   console.log("iam litening at port 8000");
