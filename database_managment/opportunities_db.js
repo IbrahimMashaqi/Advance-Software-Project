@@ -1,14 +1,4 @@
-const mysql = require("mysql2");
-require("dotenv").config();
-
-const pool = mysql
-  .createPool({
-    host: process.env.HOST,
-    user: process.env.USER_NAME,
-    password: process.env.PASSWORD,
-    database: process.env.DATABASE_NAME,
-  })
-  .promise();
+const pool = require("./db_config");
 
 async function addOpportunity(
   orphanage_id,
@@ -18,7 +8,7 @@ async function addOpportunity(
   status
 ) {
   try {
-    const [result] = await db.execute(
+    const [result] = await pool.execute(
       "INSERT INTO volunteer_opportunities (orphanage_id, title, description, posted_date, status) VALUES (?, ?, ?, ?, ?)",
       [orphanage_id, title, description, posted_date, status]
     );
@@ -30,7 +20,7 @@ async function addOpportunity(
 
 async function getAllOpportunities() {
   try {
-    const [rows] = await db.execute("SELECT * FROM volunteer_opportunities");
+    const [rows] = await pool.execute("SELECT * FROM volunteer_opportunities");
     return rows;
   } catch (err) {
     throw err;
@@ -39,7 +29,7 @@ async function getAllOpportunities() {
 
 async function getOpportunityById(id) {
   try {
-    const [rows] = await db.execute(
+    const [rows] = await pool.execute(
       "SELECT * FROM volunteer_opportunities WHERE opportunity_id = ?",
       [id]
     );
@@ -51,7 +41,7 @@ async function getOpportunityById(id) {
 
 async function updateOpportunity(id, title, description, status) {
   try {
-    const [result] = await db.execute(
+    const [result] = await pool.execute(
       "UPDATE volunteer_opportunities SET title = ?, description = ?, status = ? WHERE opportunity_id = ?",
       [title, description, status, id]
     );
@@ -63,7 +53,7 @@ async function updateOpportunity(id, title, description, status) {
 
 async function deleteOpportunity(id) {
   try {
-    const [result] = await db.execute(
+    const [result] = await pool.execute(
       "DELETE FROM volunteer_opportunities WHERE opportunity_id = ?",
       [id]
     );
