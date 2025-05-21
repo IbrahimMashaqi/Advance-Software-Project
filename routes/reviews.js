@@ -5,7 +5,7 @@ const router = express.Router();
 router.use(express.json());
 
 router.get("/", authenticateToken, getReviews);
-router.post("/addReview", authenticateToken, addReview);
+router.post("/", authenticateToken, addReview);
 router.delete("/:id", authenticateToken, delReview);
 
 

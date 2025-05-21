@@ -12,7 +12,7 @@ router.use(express.json());
 
 router.get("/", authenticateToken, getOrphanages);
 router.get("/:id", authenticateToken, getOrphanageById);
-router.post("/addOrphanage", authenticateToken, addOrphanage);
+router.post("/", authenticateToken, addOrphanage);
 router.put("/:id", authenticateToken, upOrphanage);
 router.delete("/:id", authenticateToken, delOrphanage);
 router.get('/:id/orphans', authenticateToken, getOrphansFromOrphanage);
